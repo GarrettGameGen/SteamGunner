@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -9,21 +9,27 @@ public class GunController : MonoBehaviour
     [SerializeField] private float rotatationSpeed;
     [SerializeField] private Transform r_renderedSprite;	
     
-    [SerializeField] private float cooldownSeconds = 0.5f;
-    private float cooldown;
-    [SerializeField] private int maxAmmo = 100;
-    private int ammo;
-    private float fireRate;
+    [SerializeField] private float autoFireRate = 5f;
+    [SerializeField] private int ammoClipSize = 0;
+    [SerializeField] private float reloadTime = 0.5f;
+
+    [SerializeField] private int spread = 1;
+    [SerializeField] private float spreadAngle = 20f;
+
+    [System.NonSerialized]public bool isFireInput = false; 
+
+    private float reloadTimeStore;
+    private int ammoInClip;
     private float nextFire;
 
     private bool m_FacingRight = true;  // For determining which way the player is currently facing.
 
-    void Start()
+    public virtual void Start()
     {
-        
+        autoFireRate = 1/autoFireRate; //Convert bullets per seconds into fireRate
     }
 
-    private void Update() 
+    public virtual void Update() 
     {
         //AIM logic
         Vector3 vectorToTarget = reticle.position - transform.position;
@@ -43,48 +49,43 @@ public class GunController : MonoBehaviour
         }   
 
         //FireButtonCode
-        if (fireRate == 0 && Input.GetButtonDown("Fire1"))
+        if (autoFireRate == 0 && Input.GetButtonDown("Fire1"))
         {   //Reduced to a single if, cause It does exactly the same
             //And in my Opinion, looks better. (You might want not to
             //in case you have anything else here that do needs the if)
             Shoot ();
         }
-        else
+        else if (Input.GetButton("Fire1") && Time.time > nextFire)
         {
-            if (Input.GetButton("Fire1") && Time.time > nextFire && fireRate > 0)
-            {
-            //I added "&& fireRate > 0", because if not, this will run if the user decides
-            //to hold the button, as "GetButtonDown" only returns true the frame the button
-            //is pressed, and while its hold, is false, so the "else" will run, and so will this.
-                if (ammo > 0)
-                {   //If you have ammo
-                   nextFire = Time.time + fireRate;
-                   Shoot ();
-                   ammo--; //Explained by itself
-                }
-                if (ammo == 0)
-                {   //If you no longer have ammo
-                   if (cooldown > Time.time)
-                   {   //If there is no cooldown (relatively)
-                      cooldown = Time.time + cooldownSeconds;
-                   }
+            if (ammoInClip > 0 || ammoClipSize == 0)
+            {   
+                nextFire = Time.time + autoFireRate;
+                Shoot ();
+                ammoInClip--; 
+                if (ammoInClip <= 0)
+                {   
+                    reloadTimeStore = Time.time + reloadTime;
                 }
             }
+            
         }
  
-       if (Time.time > cooldown && ammo == 0)
-       {   //If the cooldown is over, and you have no ammo cause else this will run kinda always,
-           //as here we set the ammo to maxAmmo, and cooldown only happens when you run out
-           //of ammo, then you will be constantly fulling the ammo.
-           ammo = maxAmmo;
+       if (Time.time > reloadTimeStore && ammoInClip <= 0 && ammoClipSize != 0)
+       {   
+           ammoInClip = ammoClipSize;
        }
     }
 
-    public void Shoot() 
+    public virtual void Shoot() 
     {
-        GameObject bulletInstatiation = Instantiate(bullet, transform.position, transform.rotation);
-        bulletInstatiation.GetComponent<BulletController>().gunRotationOnFire = transform.rotation;
-        Destroy(bulletInstatiation,5f);
+        float forwardAngle = transform.rotation.eulerAngles.z;
+        for(int i = 0; i < spread; i++) 
+        {
+            forwardAngle += spreadAngle*i;
+            GameObject bulletInstatiation = Instantiate(bullet, transform.position, transform.rotation);
+            bulletInstatiation.GetComponent<BulletController>().bulletAngle = forwardAngle;
+            Destroy(bulletInstatiation,5f);
+        }
     }
 
     private void Flip()
