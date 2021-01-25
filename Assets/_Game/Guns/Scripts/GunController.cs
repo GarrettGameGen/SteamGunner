@@ -17,7 +17,9 @@ public class GunController : MonoBehaviour
     [SerializeField] private int spread = 1;
     [SerializeField] private float spreadAngle = 20f;
 
-    [System.NonSerialized]public bool isFireInput = false; 
+    [Range(0, 10f)] [SerializeField] private float jitterAngle = 5f;
+
+    [System.NonSerialized] public bool isFireInput = true; 
 
     private float reloadTimeStore;
     private int ammoInClip;
@@ -50,13 +52,11 @@ public class GunController : MonoBehaviour
         }   
 
         //FireButtonCode
-        if (autoFireRate == 0 && Input.GetButtonDown("Fire1"))
-        {   //Reduced to a single if, cause It does exactly the same
-            //And in my Opinion, looks better. (You might want not to
-            //in case you have anything else here that do needs the if)
-            Shoot ();
-        }
-        else if (Input.GetButton("Fire1") && Time.time > nextFire)
+        // if (autoFireRate == 0 && Input.GetButtonDown("Fire1"))
+        // {  
+        //     Shoot ();
+        // } else
+        if (isFireInput && Time.time > nextFire) //Input.GetButton("Fire1")
         {
             if (ammoInClip > 0 || ammoClipSize == 0)
             {   
@@ -85,8 +85,8 @@ public class GunController : MonoBehaviour
             if(modI == 0) factor = -1;
             float bulletAngle = (int)(i/2)*factor*spreadAngle + forwardAngle;
             GameObject bulletInstatiation = Instantiate(bullet, barrel.position, transform.rotation);
-            //if(i == 1) { bulletInstatiation.transform.localScale *= 2f; }
-            bulletInstatiation.GetComponent<BulletController>().bulletAngle = bulletAngle;
+            float jitter = UnityEngine.Random.Range(-jitterAngle, jitterAngle); 
+            bulletInstatiation.GetComponent<BulletController>().bulletAngle = bulletAngle+jitter;
             Destroy(bulletInstatiation,2f);
         }
     }

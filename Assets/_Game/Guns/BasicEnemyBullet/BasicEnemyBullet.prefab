@@ -12,9 +12,9 @@ GameObject:
   - component: {fileID: 2669711673711891152}
   - component: {fileID: -3599822340902050285}
   - component: {fileID: -4028331386907510474}
-  - component: {fileID: 5333512552815010418}
+  - component: {fileID: 8627864534867614126}
   m_Layer: 0
-  m_Name: PlayerBullet
+  m_Name: BasicEnemyBullet
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -74,7 +74,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 10
-  m_Sprite: {fileID: 21300000, guid: 114d10d7d3b292f2894d818c1594b8bc, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 150ce6fa60abaa70cac47bd5e94e4b4a, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -122,7 +122,7 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 0.15625
---- !u!114 &5333512552815010418
+--- !u!114 &8627864534867614126
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -134,9 +134,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 64ec5f4e0c986f16381ba30f0ab2e227, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 10
+  speed: 5
   m_MovementSmoothing: 0.05
-  critChance: 0.5
+  critChance: 0.1
   critsizeBonus: 2
   defualtDamage: 1
   isPhasing: 0

@@ -14,19 +14,15 @@ public class BulletController : MonoBehaviour
     [Range(0, 1f)] [SerializeField] private float critChance = 0.5f;
     [SerializeField] private float critsizeBonus = 2f;
     [SerializeField] private float defualtDamage = 1f;
-    [SerializeField] public bool isCritical = false;
+    [System.NonSerialized] public bool isCritical = false;
+    [SerializeField] private bool isPhasing = false;                            //Can pass through objects
     
-    [SerializeField] private Rigidbody2D m_Rigidbody2D;
+    private Rigidbody2D m_Rigidbody2D;
 	private Vector3 m_Velocity = Vector3.zero;
 
-    // Start is called before the first frame update
-    public virtual void Start()
+    void Awake()
     {
-        m_Rigidbody2D = this.gameObject.GetComponent<Rigidbody2D>();
-    }
-
-    public void Awake()
-    {
+        m_Rigidbody2D = gameObject.GetComponent<Rigidbody2D>();
         float rand = UnityEngine.Random.Range(0.0f, 1.0f);
         if(rand <= critChance)
         {
@@ -36,12 +32,25 @@ public class BulletController : MonoBehaviour
         }
     }
 
-    public void Move(float angle)
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if(other.gameObject.layer == LayerMask.NameToLayer("Ground") && !isPhasing) 
+        {
+            Destroy(gameObject);
+        }
+    }
+
+    public void Update()
 	{
+        float angle = bulletAngle;
         angle *= Mathf.Deg2Rad;
         Vector2 targetVelocity = new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle));
 
         targetVelocity *= speed;
         m_Rigidbody2D.velocity = Vector3.SmoothDamp(m_Rigidbody2D.velocity, targetVelocity, ref m_Velocity, m_MovementSmoothing);
+    }
+    public virtual void OnDestroy() 
+    {
+        
     }
 }
