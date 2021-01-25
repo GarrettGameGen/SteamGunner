@@ -5,6 +5,7 @@ using UnityEngine;
 public class GunController : MonoBehaviour
 {
     [SerializeField] private Transform reticle;
+    [SerializeField] private Transform barrel;
     [SerializeField] private GameObject bullet;
     [SerializeField] private float rotatationSpeed;
     [SerializeField] private Transform r_renderedSprite;	
@@ -67,9 +68,7 @@ public class GunController : MonoBehaviour
                     reloadTimeStore = Time.time + reloadTime;
                 }
             }
-            
         }
- 
        if (Time.time > reloadTimeStore && ammoInClip <= 0 && ammoClipSize != 0)
        {   
            ammoInClip = ammoClipSize;
@@ -79,12 +78,16 @@ public class GunController : MonoBehaviour
     public virtual void Shoot() 
     {
         float forwardAngle = transform.rotation.eulerAngles.z;
-        for(int i = 0; i < spread; i++) 
+        for(int i = 1; i <= spread; i++) 
         {
-            forwardAngle += spreadAngle*i;
-            GameObject bulletInstatiation = Instantiate(bullet, transform.position, transform.rotation);
-            bulletInstatiation.GetComponent<BulletController>().bulletAngle = forwardAngle;
-            Destroy(bulletInstatiation,5f);
+            float modI = i%2;
+            float factor = 1;
+            if(modI == 0) factor = -1;
+            float bulletAngle = (int)(i/2)*factor*spreadAngle + forwardAngle;
+            GameObject bulletInstatiation = Instantiate(bullet, barrel.position, transform.rotation);
+            //if(i == 1) { bulletInstatiation.transform.localScale *= 2f; }
+            bulletInstatiation.GetComponent<BulletController>().bulletAngle = bulletAngle;
+            Destroy(bulletInstatiation,2f);
         }
     }
 
