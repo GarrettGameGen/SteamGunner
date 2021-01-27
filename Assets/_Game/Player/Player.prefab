@@ -30,6 +30,18 @@ Transform:
   m_Father: {fileID: 3021181551505452335}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1128019617
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 460049027722312230}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0eecc2fd6bc48002688410281795b951, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1114914595830948265
 GameObject:
   m_ObjectHideFlags: 0
@@ -261,11 +273,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 920131cd8d32a8a6d95898e0b1d9892c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_JumpForce: 15
   runSpeed: 40
   m_CrouchSpeed: 0.5
   m_MovementSmoothing: 0.21
+  m_JumpForce: 8
+  m_JumpSustainForce: 25
   m_AirControl: 1
+  jumpLength: 0.25
   coyoteTime: 0.2
   m_WhatIsGround:
     serializedVersion: 2
@@ -376,12 +390,29 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6212380941535916346, guid: 1d26eec269f6a2555b51eb952d0ff7ef, type: 3}
+      propertyPath: autoFireRate
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6212380941535916346, guid: 1d26eec269f6a2555b51eb952d0ff7ef, type: 3}
+      propertyPath: spreadAngle
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 6212380941535916346, guid: 1d26eec269f6a2555b51eb952d0ff7ef, type: 3}
+      propertyPath: jitterAngle
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 6212380941535916347, guid: 1d26eec269f6a2555b51eb952d0ff7ef, type: 3}
       propertyPath: m_Name
       value: Gun1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1d26eec269f6a2555b51eb952d0ff7ef, type: 3}
+--- !u!1 &460049027722312230 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6212380941535916347, guid: 1d26eec269f6a2555b51eb952d0ff7ef, type: 3}
+  m_PrefabInstance: {fileID: 5788431371634559773}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &460049027722312249 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6212380941535916324, guid: 1d26eec269f6a2555b51eb952d0ff7ef, type: 3}

@@ -12,7 +12,7 @@ public class PlayerMovement : MonoBehaviour
    private void Update() 
    {
         horizontalMove = Input.GetAxisRaw("Horizontal");
-        if(Input.GetButtonDown("Jump")) 
+        if(Input.GetButton("Jump")) 
         { 
            jump = true; 
         } else

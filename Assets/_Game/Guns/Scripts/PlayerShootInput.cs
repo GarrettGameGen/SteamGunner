@@ -4,7 +4,12 @@ using UnityEngine;
 
 public class PlayerShootInput : MonoBehaviour
 {
-    public GunController guncontroller;
+    private GunController guncontroller;
+
+    void Awake()
+    {
+        guncontroller = gameObject.GetComponent<GunController>();
+    }
 
     void Update()
     {

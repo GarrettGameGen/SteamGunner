@@ -77,6 +77,7 @@ public class GunController : MonoBehaviour
 
     public virtual void Shoot() 
     {
+        ScoreManager.Instance.AddScore(10); 
         float forwardAngle = transform.rotation.eulerAngles.z;
         for(int i = 1; i <= spread; i++) 
         {
