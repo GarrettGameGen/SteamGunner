@@ -6,9 +6,11 @@ using TMPro;
 public class ScoreManager : MonoBehaviour
 {
     public TMP_Text scoreText;
+    public TMP_Text ScorePool;
     public TMP_Text multiplierText;
 
     private long score;
+    private int scorePool;
     
     private int multiplier = 1;
     private float timeSinceLastMultiplierIncrease;
@@ -49,9 +51,9 @@ public class ScoreManager : MonoBehaviour
             timeSinceLastMultiplierIncrease = Time.time;
             multiplierIncreaseAmount = 1;
         }
-        if(multiplier > 9000 || multiplier < 0 ) {
+        if(multiplier > 9999 || multiplier < 0 ) {
             multiplierIncreaseAmount = 1;
-            multiplier = 9001;
+            multiplier = 9999;
         } 
         multiplierText.text = "X"+multiplier.ToString();
     }

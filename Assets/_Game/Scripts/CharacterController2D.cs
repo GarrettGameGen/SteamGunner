@@ -10,6 +10,7 @@ public class CharacterController2D : MonoBehaviour
 	[Range(0, 1)] [SerializeField] private float m_CrouchSpeed = .36f;			// Amount of maxSpeed applied to crouching movement. 1 = 100%
 	[Range(0, .3f)] [SerializeField] private float m_MovementSmoothing = .05f;	// How much to smooth out the movement
     [SerializeField] private float m_JumpForce = 400f;							// Amount of force added when the player jumps.
+    [SerializeField] private float m_Gravity = 8.0f;							// Amount of force added when the player jumps.
     [SerializeField] private float m_JumpSustainForce = 40f;							// Amount of force added when the player jumps.
 	[SerializeField] private bool m_AirControl = false;							// Whether or not a player can steer while jumping;
 	[SerializeField] private float jumpLength = 1f;								
@@ -76,8 +77,10 @@ public class CharacterController2D : MonoBehaviour
 		}
 		if(m_Grounded){
 			groundClock = 0f;
+			m_Rigidbody2D.gravityScale = 0;
 		} else {
 			groundClock += Time.fixedDeltaTime;
+			m_Rigidbody2D.gravityScale = m_Gravity;
 		}
 
 		//RightLockCheck
@@ -176,7 +179,6 @@ public class CharacterController2D : MonoBehaviour
 		}
 		if(jump && jumpTime-Time.time > 0)
 		{
-			Debug.Log("I am Flying "+ (jumpTime-Time.time));
 			m_Rigidbody2D.AddForce(new Vector2(0f, m_JumpSustainForce),ForceMode2D.Force);
 			m_Rigidbody2D.velocity = Vector2.ClampMagnitude(m_Rigidbody2D.velocity, m_JumpSustainForce+1f);
 		}
