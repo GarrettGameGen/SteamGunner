@@ -12,9 +12,8 @@ public abstract class CharacterDataObject : ScriptableObject
         enemy
     }
 
-    [NonSerialized]
+    //[NonSerialized]
     public Faction faction;
     public string characterName;
     public int maxHP;
-    public int hp;
 }

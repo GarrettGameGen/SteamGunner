@@ -11,13 +11,6 @@ public class CombatHandler : MonoBehaviour
     public event System.Action OnDamageEvent;
     public event System.Action OnHealEvent;
     private CharacterData data;
-    public int healthBarLength = 345;
-    public int atbBarLength = 348;
-    private float damagedHP;
-    public float damageSpeed;
-    private float damageDelay = 0;
-    public float damageDelayTime;
-    RectTransform splash;
 
     private void Awake()
     {
@@ -34,31 +27,11 @@ public class CombatHandler : MonoBehaviour
         {
             data.dataObject.maxHP = 1;
         }
-        data.maxHP = data.dataObject.maxHP;
-
-        data.hp = data.dataObject.hp;
-
-        SetHealthBar();
-        damagedHP = data.hp;
+        data.hp = data.maxHP = data.dataObject.maxHP;
     }
 
     private void Update()
     {
-        if (damagedHP != data.hp)
-        {
-            damageDelay += Time.deltaTime;
-            if (damageDelay >= damageDelayTime)
-            {
-                damagedHP -= damageSpeed;
-                SetDamageBar();
-                if (damagedHP - data.hp < 1)
-                {
-                    damagedHP = data.hp;
-                    damageDelay = 0;
-                    splash.GetComponent<Image>().enabled = false;
-                }
-            }
-        }
     }
 
     public void TakeDamage(int damage)
@@ -73,7 +46,6 @@ public class CombatHandler : MonoBehaviour
         {
             OnDamageEvent.Invoke();
         }
-        SetHealthBar();
     }
 
     public void Heal(int healAmount)
@@ -81,13 +53,5 @@ public class CombatHandler : MonoBehaviour
         data.hp += healAmount;
         data.hp = Mathf.Clamp(data.hp, 0, data.dataObject.maxHP);
         OnHealEvent.Invoke();
-    }
-
-    private void SetHealthBar()
-    {
-    }
-
-    private void SetDamageBar()
-    {
     }
 }

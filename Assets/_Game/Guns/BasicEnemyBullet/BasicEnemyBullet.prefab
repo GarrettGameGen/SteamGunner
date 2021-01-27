@@ -140,3 +140,4 @@ MonoBehaviour:
   critsizeBonus: 2
   defualtDamage: 1
   isPhasing: 0
+  faction: 1
