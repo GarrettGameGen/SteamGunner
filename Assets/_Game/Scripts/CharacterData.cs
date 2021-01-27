@@ -12,5 +12,4 @@ public class CharacterData : MonoBehaviour
     public string characterName;
     public int maxHP;
     public int hp;
-    public GameObject healthBar;
 }

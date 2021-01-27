@@ -13,9 +13,11 @@ public class BulletController : MonoBehaviour
 
     [Range(0, 1f)] [SerializeField] private float critChance = 0.5f;
     [SerializeField] private float critsizeBonus = 2f;
-    [SerializeField] private float defualtDamage = 1f;
+    [SerializeField] private float defaultDamage = 1f;
     [System.NonSerialized] public bool isCritical = false;
     [SerializeField] private bool isPhasing = false;                            //Can pass through objects
+
+    [SerializeField] CharacterDataObject.Faction faction;
     
     private Rigidbody2D m_Rigidbody2D;
 	private Vector3 m_Velocity = Vector3.zero;
@@ -27,7 +29,7 @@ public class BulletController : MonoBehaviour
         if(rand <= critChance)
         {
             transform.localScale *= critsizeBonus;
-            defualtDamage *= 2f;
+            defaultDamage *= 2f;
             isCritical = true;
         }
     }
@@ -37,6 +39,17 @@ public class BulletController : MonoBehaviour
         if(other.gameObject.layer == LayerMask.NameToLayer("Ground") && !isPhasing) 
         {
             Destroy(gameObject);
+        }
+
+        Debug.Log("collision");
+        if (other.gameObject.GetComponent<CharacterData>())
+        {
+            Debug.Log("with character");
+            if (faction != other.gameObject.GetComponent<CharacterData>().faction)
+            {
+                Debug.Log("of opposing faction");
+                other.gameObject.GetComponent<CombatHandler>().TakeDamage((int)defaultDamage);
+            }
         }
     }
 
@@ -49,6 +62,7 @@ public class BulletController : MonoBehaviour
         targetVelocity *= speed;
         m_Rigidbody2D.velocity = Vector3.SmoothDamp(m_Rigidbody2D.velocity, targetVelocity, ref m_Velocity, m_MovementSmoothing);
     }
+
     public virtual void OnDestroy() 
     {
         
