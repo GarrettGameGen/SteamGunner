@@ -134,10 +134,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 64ec5f4e0c986f16381ba30f0ab2e227, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  faction: 1
   speed: 5
   m_MovementSmoothing: 0.05
   critChance: 0.1
   critsizeBonus: 2
-  defualtDamage: 1
+  damage: 1
   isPhasing: 0
-  faction: 1
+  destoryEffect: {fileID: 8909483758611582824, guid: 1be7dcd1d93e17b138ef6da27c707e45, type: 3}

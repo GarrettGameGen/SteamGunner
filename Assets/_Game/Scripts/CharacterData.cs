@@ -1,15 +1,13 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using System;
+﻿using UnityEngine;
 
 [RequireComponent(typeof(CombatHandler))]
 public class CharacterData : MonoBehaviour
 {
     public CharacterDataObject dataObject;
 
-    public CharacterDataObject.Faction faction;
-    public string characterName;
-    public int maxHP;
-    public int hp;
+    [System.NonSerialized] public CharacterDataObject.Faction faction;
+    [System.NonSerialized] public string characterName;
+    [System.NonSerialized] public int maxHP;
+    [System.NonSerialized] public int hp;
+    [System.NonSerialized] public int score;
 }

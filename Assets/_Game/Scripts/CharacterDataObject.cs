@@ -2,10 +2,9 @@
 using System;
 using System.Collections.Generic;
 
-//[CreateAssetMenu(fileName = "CharacterDataObject", menuName = "Game Data/CharacterDataObject")]
-public abstract class CharacterDataObject : ScriptableObject
+[CreateAssetMenu(fileName = "CharacterDataObject", menuName = "Game Data/CharacterDataObject")]
+public class CharacterDataObject : ScriptableObject
 {
-
     public enum Faction
     {
         ally,
@@ -16,4 +15,5 @@ public abstract class CharacterDataObject : ScriptableObject
     public Faction faction;
     public string characterName;
     public int maxHP;
+    public int score;
 }

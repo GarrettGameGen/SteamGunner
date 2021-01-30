@@ -161,17 +161,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 312b5d2508f9e10d7a5d76944ce10103, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _MachinePistolDataObject: {fileID: 11400000, guid: 2eaefa6f0976dd7878b98cf6555ec2d7, type: 2}
   reticle: {fileID: 0}
   barrel: {fileID: 9065574621418354075}
-  bullet: {fileID: 3149416949945844986, guid: 355a899c7d4070efca176d631a59a607, type: 3}
-  rotatationSpeed: 5
   r_renderedSprite: {fileID: 9065574621418354075}
-  autoFireRate: 0
-  ammoClipSize: 0
-  reloadTime: 0.5
-  spread: 1
-  spreadAngle: 20
-  jitterAngle: 5
 --- !u!58 &822486522
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -212,11 +205,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 989494eadbdd9be4d817bd6557c56ef1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dataObject: {fileID: 11400000, guid: de2d132da4f6f084dadffe1385a67115, type: 2}
-  faction: 0
-  characterName: 
-  maxHP: 0
-  hp: 0
+  dataObject: {fileID: 11400000, guid: 644f66180b071d9ff9e7fd7663ba63ea, type: 2}
 --- !u!114 &822486519
 MonoBehaviour:
   m_ObjectHideFlags: 0

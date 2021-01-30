@@ -274,14 +274,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   runSpeed: 40
-  m_CrouchSpeed: 0.5
+  maxSpeed: 15
   m_MovementSmoothing: 0.21
-  m_JumpForce: 8
-  m_Gravity: 8
-  m_JumpSustainForce: 115
+  m_JumpForce: 40
+  m_Gravity: 10
   m_AirControl: 1
-  jumpLength: 0.2
-  coyoteTime: 0.2
+  m_JumpLength: 0.2
+  m_CoyoteTime: 0.1
   m_WhatIsGround:
     serializedVersion: 2
     m_Bits: 256
@@ -289,8 +288,8 @@ MonoBehaviour:
   m_RightCheck: {fileID: 7795486832035079181}
   m_LeftCheck: {fileID: 4170322238100547185}
   m_CeilingCheck: {fileID: 4191428771375324706}
-  m_CrouchDisableCollider: {fileID: 0}
-  r_renderedSprite: {fileID: 5301199873836375679}
+  m_renderedSprite: {fileID: 5301199873836375679}
+  m_reticle: {fileID: 0}
   OnLandEvent:
     m_PersistentCalls:
       m_Calls: []

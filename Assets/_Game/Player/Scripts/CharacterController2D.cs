@@ -5,24 +5,27 @@ using UnityEngine.Events;
 
 public class CharacterController2D : MonoBehaviour
 {
-	[SerializeField] private float runSpeed = 40f;
+	//https://pastebin.com/aWkD7jgW
 
-	[Range(0, 1)] [SerializeField] private float m_CrouchSpeed = .36f;			// Amount of maxSpeed applied to crouching movement. 1 = 100%
+	[SerializeField] private float runSpeed = 40f;
+	[SerializeField] private float maxSpeed = 100f;
+
 	[Range(0, .3f)] [SerializeField] private float m_MovementSmoothing = .05f;	// How much to smooth out the movement
-    [SerializeField] private float m_JumpForce = 400f;							// Amount of force added when the player jumps.
+    [SerializeField] private float m_JumpForce = 40f;							// Amount of force added when the player jumps.
     [SerializeField] private float m_Gravity = 8.0f;							// Amount of force added when the player jumps.
-    [SerializeField] private float m_JumpSustainForce = 40f;							// Amount of force added when the player jumps.
 	[SerializeField] private bool m_AirControl = false;							// Whether or not a player can steer while jumping;
-	[SerializeField] private float jumpLength = 1f;								
-	[Range(0, .4f)] [SerializeField] private float coyoteTime = 0.1f;			// 
+	[SerializeField] private float m_JumpLength = 1f;								
+	[Range(0, .4f)] [SerializeField] private float m_CoyoteTime = 0.1f;			// 
+
 	[SerializeField] private LayerMask m_WhatIsGround;							// A mask determining what is ground to the character
 	[SerializeField] private Transform m_GroundCheck;							// A position marking where to check if the player is grounded.
 	[SerializeField] private Transform m_RightCheck;							// 
 	[SerializeField] private Transform m_LeftCheck;								//
 	[SerializeField] private Transform m_CeilingCheck;							// A position marking where to check for ceilings
-	[SerializeField] private Collider2D m_CrouchDisableCollider;				// A collider that will be disabled when crouching
 
-	[SerializeField] private Transform r_renderedSprite;						//
+
+	[SerializeField] private Transform m_renderedSprite;						//
+	[SerializeField] private Transform m_reticle;
 
 	const float k_GroundedRadius = .1f; // Radius of the overlap circle to determine if grounded
 	private bool m_Grounded;            // Whether or not the player is grounded.
@@ -31,8 +34,9 @@ public class CharacterController2D : MonoBehaviour
 	private bool m_LeftLock;            // Whether or not the player is next to a wall to thier Left.
 	const float k_SideLockRadius = .1f; // Radius of the overlap circle to determine if grounded
 	const float k_CeilingRadius = .1f; // Radius of the overlap circle to determine if the player can stand up
-	private Rigidbody2D m_Rigidbody2D;
+	private Rigidbody2D k_Rigidbody2D;
 	private Vector3 m_Velocity = Vector3.zero;
+	private Vector3 currentVelocity; 
 	private bool m_FacingRight = true;  // For determining which way the player is currently facing.
 	private float jumpTime;								
 
@@ -49,7 +53,7 @@ public class CharacterController2D : MonoBehaviour
 
 	private void Awake()
 	{
-		m_Rigidbody2D = GetComponent<Rigidbody2D>();
+		k_Rigidbody2D = GetComponent<Rigidbody2D>();
 
 		if (OnLandEvent == null)
 			OnLandEvent = new UnityEvent();
@@ -72,15 +76,18 @@ public class CharacterController2D : MonoBehaviour
 			{
 				m_Grounded = true;
 				if (!wasGrounded)
+				{
 					OnLandEvent.Invoke();
+					//StartCoroutine("Roll");
+				}
 			}
 		}
 		if(m_Grounded){
 			groundClock = 0f;
-			m_Rigidbody2D.gravityScale = 0;
+			k_Rigidbody2D.gravityScale = 1;
 		} else {
 			groundClock += Time.fixedDeltaTime;
-			m_Rigidbody2D.gravityScale = m_Gravity;
+			k_Rigidbody2D.gravityScale = m_Gravity;
 		}
 
 		//RightLockCheck
@@ -100,99 +107,81 @@ public class CharacterController2D : MonoBehaviour
 	}
 
 
-	public void Move(float move, bool crouch, bool jump)
+	public void Move(float move, bool jump)
 	{
 		move *= runSpeed;
-		// If crouching, check to see if the character can stand up
-		if (!crouch)
-		{
-			// If the character has a ceiling preventing them from standing up, keep them crouching
-			if (Physics2D.OverlapCircle(m_CeilingCheck.position, k_CeilingRadius, m_WhatIsGround))
-			{
-				crouch = true;
-			}
-		}
 
 		//only control the player if grounded or airControl is turned on
+		float aimPos = m_reticle.position.x - transform.position.x;
+		if (aimPos > 0 && !m_FacingRight)
+		{
+			Flip();
+		}
+		else if (aimPos < 0 && m_FacingRight)
+		{
+			Flip();
+		}
+
+		//Jump & Gravity
+		float yVelocity = k_Rigidbody2D.velocity.y;
+		if (groundClock<m_CoyoteTime && jump)
+		{
+			groundClock = m_CoyoteTime+0.1f;
+			yVelocity = m_JumpForce;
+			jumpTime = Time.time+m_JumpLength;
+		} else if(jump && jumpTime-Time.time > 0)// && jumpSustainLag+Time.time > jumpTime)
+		{
+			yVelocity = m_JumpForce;
+		} else if(!m_Grounded){
+			yVelocity = -1*m_Gravity;
+		}
+
+		//Move
 		if (m_Grounded || m_AirControl)
 		{
-
-			// If crouching
-			if (crouch)
-			{
-				if (!m_wasCrouching)
-				{
-					m_wasCrouching = true;
-					OnCrouchEvent.Invoke(true);
-				}
-
-				// Reduce the speed by the crouchSpeed multiplier
-				move *= m_CrouchSpeed;
-
-				// Disable one of the colliders when crouching
-				if (m_CrouchDisableCollider != null)
-					m_CrouchDisableCollider.enabled = false;
-			} else
-			{
-				// Enable the collider when not crouching
-				if (m_CrouchDisableCollider != null)
-					m_CrouchDisableCollider.enabled = true;
-
-				if (m_wasCrouching)
-				{
-					m_wasCrouching = false;
-					OnCrouchEvent.Invoke(false);
-				}
-			}
 			if(m_RightLock && move>0) {
 				move = 0;
 			}
 			if(m_LeftLock && move<0) {
 				move = 0;
 			}
-			// Move the character by finding the target velocity
-			Vector3 targetVelocity = new Vector2(move * 10f, m_Rigidbody2D.velocity.y);
-			// And then smoothing it out and applying it to the character
-			m_Rigidbody2D.velocity = Vector3.SmoothDamp(m_Rigidbody2D.velocity, targetVelocity, ref m_Velocity, m_MovementSmoothing);
-			//m_Rigidbody2D.velocity = targetVelocity;
-
-			// If the input is moving the player right and the player is facing left...
-			if (move > 0 && !m_FacingRight)
-			{
-				// ... flip the player.
-				Flip();
-			}
-			// Otherwise if the input is moving the player left and the player is facing right...
-			else if (move < 0 && m_FacingRight)
-			{
-				// ... flip the player.
-				Flip();
-			}
-		}
-		// If the player should jump...
-		if (groundClock<coyoteTime && jump)
-		{
-			groundClock = coyoteTime+0.1f;
-			m_Rigidbody2D.AddForce(new Vector2(0f, m_JumpForce),ForceMode2D.Impulse);
-			m_Rigidbody2D.velocity = Vector2.ClampMagnitude(m_Rigidbody2D.velocity, m_JumpForce+1f);
-			jumpTime = Time.time+jumpLength;
-		}
-		if(jump && jumpTime-Time.time > 0)
-		{
-			m_Rigidbody2D.AddForce(new Vector2(0f, m_JumpSustainForce),ForceMode2D.Force);
-			m_Rigidbody2D.velocity = Vector2.ClampMagnitude(m_Rigidbody2D.velocity, m_JumpSustainForce+1f);
+			Vector3 targetVelocity = new Vector2(move * 10f, yVelocity);
+			currentVelocity = Vector3.SmoothDamp(currentVelocity, targetVelocity, ref m_Velocity, m_MovementSmoothing);
+			k_Rigidbody2D.velocity = Vector2.ClampMagnitude(k_Rigidbody2D.velocity, maxSpeed);
+			k_Rigidbody2D.velocity = currentVelocity;
 		}
 	}
 
 
 	private void Flip()
 	{
-		// Switch the way the player is labelled as facing.
 		m_FacingRight = !m_FacingRight;
 
 		// Multiply the player's x local scale by -1.
-		Vector3 theScale = r_renderedSprite.localScale;
+		Vector3 theScale = m_renderedSprite.localScale;
 		theScale.x *= -1;
-		r_renderedSprite.localScale = theScale;
+		m_renderedSprite.localScale = theScale;
+	}
+	private IEnumerator Roll()
+	{
+		float rollDirection = 1;
+		float aimPos = m_reticle.position.x - transform.position.x;
+		if (aimPos > 0 && !m_FacingRight)
+		{
+			rollDirection = 1;
+		}
+		else if (aimPos < 0 && m_FacingRight)
+		{
+			rollDirection = -1;
+		}
+
+		int steps = 8;
+		float totalTime = 0.25f;
+		float angle = 360/steps * rollDirection;
+		for(int i = 0; i < steps; i++)
+		{
+			m_renderedSprite.RotateAround(m_renderedSprite.transform.position,Vector3.forward, angle);
+			yield return new WaitForSeconds(totalTime/steps);
+		}
 	}
 }

@@ -8,16 +8,16 @@ public class BulletController : MonoBehaviour
 {
     [System.NonSerialized] public float bulletAngle;
 
+    [SerializeField] CharacterDataObject.Faction faction;
     [SerializeField] private float speed = 10f;
     [Range(0, .3f)] [SerializeField] private float m_MovementSmoothing = .05f;	// How much to smooth out the movement
 
     [Range(0, 1f)] [SerializeField] private float critChance = 0.5f;
     [SerializeField] private float critsizeBonus = 2f;
-    [SerializeField] private float defaultDamage = 1f;
+    [SerializeField] private float damage = 1f;
     [System.NonSerialized] public bool isCritical = false;
     [SerializeField] private bool isPhasing = false;                            //Can pass through objects
-
-    [SerializeField] CharacterDataObject.Faction faction;
+    [SerializeField] private GameObject destoryEffect;                            
     
     private Rigidbody2D m_Rigidbody2D;
 	private Vector3 m_Velocity = Vector3.zero;
@@ -29,7 +29,7 @@ public class BulletController : MonoBehaviour
         if(rand <= critChance)
         {
             transform.localScale *= critsizeBonus;
-            defaultDamage *= 2f;
+            damage *= 2f;
             isCritical = true;
         }
     }
@@ -41,14 +41,12 @@ public class BulletController : MonoBehaviour
             Destroy(gameObject);
         }
 
-        Debug.Log("collision");
         if (other.gameObject.GetComponent<CharacterData>())
         {
-            Debug.Log("with character");
             if (faction != other.gameObject.GetComponent<CharacterData>().faction)
             {
-                Debug.Log("of opposing faction");
-                other.gameObject.GetComponent<CombatHandler>().TakeDamage((int)defaultDamage);
+                other.gameObject.GetComponent<CombatHandler>().TakeDamage((int)damage);
+                Destroy(gameObject);
             }
         }
     }
@@ -65,6 +63,6 @@ public class BulletController : MonoBehaviour
 
     public virtual void OnDestroy() 
     {
-        
+        Instantiate(destoryEffect,transform.position,transform.rotation);
     }
 }

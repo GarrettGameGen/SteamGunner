@@ -22,10 +22,12 @@ public abstract class CharacterHandler : MonoBehaviour
 
     public virtual void OnEnable()
     {
+        
     }
 
     public virtual void OnDeath()
     {
+        ScoreManager.Instance.AddScore(data.score); 
         Destroy(gameObject);
     }
 
